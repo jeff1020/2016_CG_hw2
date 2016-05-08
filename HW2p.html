@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+<style>
+
+#info {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  color: #ffff00
+}
+
+#gui {
+  position: absolute;
+  top: 50px;
+  right: 10px;
+  height: 500px;
+  //text-align: center;
+}
+
+body {
+  overflow: hidden;
+}
+
+
+</style>
+</head>
+
+<body> 
+
+<div id="info">Homework 2 p
+  <br>
+  <br> Danboard moving
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r74/three.min.js"></script>
+<script src="https://dl.dropboxusercontent.com/u/3587259/Code/Threejs/OrbitControls.js">
+
+
+</script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5/dat.gui.min.js"></script>
+
+
+<script>
+
+var camera, scene, renderer;
+var controls; 
+var box, frame;
+var angle2 = 0;
+var angle3 = 0;
+
+init();
+animate();
+
+function init() {
+  THREE.ImageUtils.crossOrigin = '';
+  clock = new THREE.Clock();
+  scene = new THREE.Scene();
+
+  camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+  camera.position.z = 200;
+  scene.add(camera);
+
+  var gridXZ = new THREE.GridHelper(100, 10);
+  gridXZ.setColors(new THREE.Color(0xff00ff), new THREE.Color(0xffffff));
+  scene.add(gridXZ);
+
+  renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x888888);
+
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  var light = new THREE.PointLight(0xffffff, 1);
+  light.position.set(150, 150, 150);
+  scene.add(light);
+  var amblight = new THREE.AmbientLight(0x404040); // soft white light
+  scene.add(amblight);
+  document.body.appendChild(renderer.domElement);
+  window.addEventListener('resize', onWindowResize, false);
+  ///////////////////////////////////////////////////////////////
+  var lid = makeLid();
+  lid2 = makeLid2();
+  lid3 = makeLid3();
+  lid4 = makeLid4();
+  
+  head = makeHead();
+  lefthand = makeLHand();
+  righthand = makeRHand();
+  rightleg = makeRLeg();
+  leftleg = makeLLeg();
+  body = makeBody();
+  ///
+  frame = new THREE.Object3D();
+  frame.add(body);
+  body.add(lid);
+  body.add(lid2);
+  body.add(lid3);
+  body.add(lid4);
+  body.add(head);
+  body.add(lefthand);
+  body.add(righthand);
+  body.add(rightleg);
+  body.add(leftleg);
+  ////
+ 
+  scene.add(box);
+	body.position.y = 30;
+  body.rotation.y = 25/16;
+}
+
+function makeBody() {
+	var materials = [];
+  // must give 6 materials for box geometry
+  materials.push(new THREE.MeshBasicMaterial({
+    map: THREE.ImageUtils.loadTexture('http://i.imgur.com/a8SnQXr.jpg'),
+    side: THREE.DoubleSide
+  }));
+  materials.push(new THREE.MeshBasicMaterial({
+    map: THREE.ImageUtils.loadTexture('http://i.imgur.com/a8SnQXr.jpg'),
+    side: THREE.DoubleSide
+  }));
+  materials.push(new THREE.MeshBasicMaterial({
+    map: THREE.ImageUtils.loadTexture('http://i.imgur.com/zLkV5Sk.jpg'),
+    side: THREE.DoubleSide
+  }));
+  materials.push(new THREE.MeshLambertMaterial({visible:false}));
+  materials.push(new THREE.MeshBasicMaterial({
+    map: THREE.ImageUtils.loadTexture('http://i.imgur.com/s2YxMMI.jpg'),
+    side: THREE.DoubleSide
+  }));
+  materials.push(new THREE.MeshBasicMaterial({
+    map: THREE.ImageUtils.loadTexture('http://i.imgur.com/QtU3H5h.jpg'),
+    side: THREE.DoubleSide
+  }));
+
+  box = new THREE.Mesh(new THREE.BoxGeometry(15, 20, 15),
+    new THREE.MeshFaceMaterial(materials));
+  return box;
+}
+
+function makeHead() {
+	var materials = [];
+  // must give 6 materials for box geometry
+  materials.push(new THREE.MeshLambertMaterial({
+    map: THREE.ImageUtils.loadTexture('http://i.imgur.com/yASxMxx.jpg'),
+    side: THREE.DoubleSide
+  }));
+  materials.push(new THREE.MeshLambertMaterial({
+    map: THREE.ImageUtils.loadTexture('http://i.imgur.com/68s8fJS.jpg'),
+    side: THREE.DoubleSide
+  }));
+  materials.push(new THREE.MeshLambertMaterial({
+    map: THREE.ImageUtils.loadTexture('http://i.imgur.com/KXw2gT6.jpg'),
+    side: THREE.DoubleSide
+  }));
+  materials.push(new THREE.MeshLambertMaterial({
+    map: THREE.ImageUtils.loadTexture('http://i.imgur.com/HYAAEHm.jpg'),
+    side: THREE.DoubleSide
+  }));
+  materials.push(new THREE.MeshLambertMaterial({
+    map: THREE.ImageUtils.loadTexture('http://i.imgur.com/HYAAEHm.jpg'),
+    side: THREE.DoubleSide
+  }));
+  materials.push(new THREE.MeshLambertMaterial({
+    map: THREE.ImageUtils.loadTexture('http://i.imgur.com/PsGRuA7.jpg'),
+    side: THREE.DoubleSide
+  }));
+
+  box = new THREE.Mesh(new THREE.BoxGeometry(40, 20, 25),
+    new THREE.MeshFaceMaterial(materials));
+  box.position.y = 20;  
+  return box;
+}
+
+function makeLHand() {
+  var box = new THREE.Mesh(new THREE.BoxGeometry(5, 18, 5),
+    new THREE.MeshLambertMaterial({
+    color: 0xc2a57d
+    }));
+  box.position.y = -2;
+  box.position.x = 13;
+  box.rotation.z= 1/2;
+  return box;
+}
+
+function makeRHand() {
+  var box = new THREE.Mesh(new THREE.BoxGeometry(5, 18, 5),
+    new THREE.MeshLambertMaterial({
+    color: 0xc2a57d
+    }));
+  box.position.y = -2;
+  box.position.x = -13;
+  box.rotation.z= -1/2;
+  return box;
+}
+
+function makeRLeg() {
+  var box = new THREE.Mesh(new THREE.BoxGeometry(6, 20, 6),
+    new THREE.MeshLambertMaterial({
+    color: 0xc2a57d
+    }));
+  box.position.y = -20;
+  box.position.x = -4;
+  return box;
+}
+
+function makeLLeg() {
+  var box = new THREE.Mesh(new THREE.BoxGeometry(6, 20, 10),
+    new THREE.MeshLambertMaterial({
+    color: 0xc2a57d
+    }));
+  box.position.y = -20;
+  box.position.x = 4;
+  return box;
+}
+
+
+function makeLid() {           //前
+  var lid = new THREE.Object3D();
+  var lidPlane = new THREE.Mesh(new THREE.PlaneGeometry(15, 7.10),
+    new THREE.MeshLambertMaterial({
+    	color: 0xc2a57d,
+      side: THREE.DoubleSide
+    }));
+  lid.add(lidPlane);
+  lid.position.z = 9;
+  lid.position.y = -13;
+  lid.rotation.x = -1/2;
+  return lid;
+}
+
+function makeLid2() {     //後
+  var lid = new THREE.Object3D();
+  var lidPlane = new THREE.Mesh(new THREE.PlaneGeometry(15, 7.5),
+    new THREE.MeshLambertMaterial({
+      color: 0xc2a57d,
+      side: THREE.DoubleSide
+    }));
+  lid.add(lidPlane);
+  lid.position.z = -9;
+  lid.position.y = -13;
+  lid.rotation.x = 1/2;
+  return lid;
+}
+
+function makeLid3() {       //右
+  var lid = new THREE.Object3D();
+  var lidPlane = new THREE.Mesh(new THREE.PlaneGeometry(15, 7.5),
+    new THREE.MeshLambertMaterial({
+      color: 0xc2a57d,
+      side: THREE.DoubleSide
+    }));
+  lid.add(lidPlane);
+  lid.position.x = 7.5;
+  lid.position.y = -13;
+  lid.rotation.y = 25/16;
+
+  return lid;
+}
+
+function makeLid4() {       //left
+  var lid = new THREE.Object3D();
+  var lidPlane = new THREE.Mesh(new THREE.PlaneGeometry(15, 7.5),
+    new THREE.MeshLambertMaterial({
+      color: 0xc2a57d,
+      side: THREE.DoubleSide
+    }));
+  lid.add(lidPlane);
+  lid.position.x = -7.5;
+  lid.position.y = -13;
+  lid.rotation.y = 25/16;
+
+  return lid;
+}
+
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+
+function animate() {
+  controls.update();
+  // angle from 0 to Pi
+  
+  ////
+  animate.sign = (animate.sign === undefined) ? 1 : animate.sign;
+  if (angle2 <-1/4 || angle2 > 1/4)
+  	animate.sign *= -1;
+  angle2 += animate.sign*0.01;
+  leftleg.rotation.x = angle2;
+  righthand.rotation.x = angle2;
+  rightleg.rotation.x = -angle2;
+  lefthand.rotation.x = -angle2;
+  ///
+  
+  requestAnimationFrame(animate);
+  render();
+  renderer.render(scene, camera);
+}
+
+function render() {
+    angle = clock.getElapsedTime();
+    body.position.set(80 * Math.cos(angle*0.5), 30, -80 * Math.sin(angle*0.5));
+    body.rotation.y = angle*0.5;
+}
+
+
+
+
+ 
+</script> 
+
+</body>
+
+</html>
